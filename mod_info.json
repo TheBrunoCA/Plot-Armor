@@ -1,0 +1,11 @@
+{
+    "id": "TheBrunoCA",
+    "name": "Plot Armor",
+    "author": "TheBrunoCA",
+    "utility": "false",
+    "version": { "major":"1", "minor": "0", "patch": "0" },
+    "description": "A cheat mod that adds some hullmods to make the game easier.",
+    "gameVersion": "0.95.1a-RC6",
+    "jars":["jars/Plot-Armor.jar"],
+    "modPlugin":"tbca.plotarmor.PlotArmorModPlugin"
+}
