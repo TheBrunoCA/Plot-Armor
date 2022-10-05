@@ -4,8 +4,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BaseHullMod;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import org.apache.log4j.Level;
-import org.apache.log4j.Priority;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +26,7 @@ public class BiomechanicalHull extends BaseHullMod {
 
         Map<String, Object> customData = cEngine.getCustomData();
         String capacityKey = "tbca_biomechanical_hull_capacity"+ship.getId();
-        String alreadyRegenKey = "tbca_biomechanical_hull_capacity"+ship.getId();
+        String alreadyRegenKey = "tbca_biomechanical_hull_alreadyRegen"+ship.getId();
 
         if(customData.get(capacityKey) == null){
             customData.put(capacityKey, 100f);
