@@ -24,7 +24,7 @@ public void advanceInCombat(ShipAPI ship, float amount) {
         if(hullDamaged(ship) && elapsed >= itterIntervalInSecs * 1000f){
             timer = System.currentTimeMillis();
 
-            float shipArmor[][] = ship.getArmorGrid().getGrid();
+            float[][] shipArmor = ship.getArmorGrid().getGrid();
             float regen = regenPerItter / (shipArmor.length * shipArmor[0].length);
 
             for(int x = 0; x < shipArmor.length; x++){

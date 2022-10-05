@@ -24,9 +24,9 @@ public void advanceInCombat(ShipAPI ship, float amount) {
         if(elapsed >= itterIntervalInSecs * 1000f){
             timer = System.currentTimeMillis();
 
-            float shipArmor[][] = getArmorGrid(ship);
-            int minFoundArmor[] = {0,0};
-            int maxFoundArmor[] = {1,1};
+            float[][] shipArmor = getArmorGrid(ship);
+            int[] minFoundArmor = {0,0};
+            int[] maxFoundArmor = {1,1};
 
             for(int x = 0; x < shipArmor.length; x++){
                 for(int y = 0; y < shipArmor[x].length; y++){

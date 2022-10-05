@@ -5,8 +5,8 @@ import com.fs.starfarer.api.combat.ShipAPI;
 
 public class RegenerativeHull extends BaseHullMod {
 
-    private float regenPerItter = 1f;
-    private float itterIntervalInSecs = 1f;
+    private final float regenPerItter = 1f;
+    private final float itterIntervalInSecs = 1f;
 
     long timer = System.currentTimeMillis();
     long now = System.currentTimeMillis();

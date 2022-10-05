@@ -32,36 +32,48 @@ public class BiomechanicalHull extends BaseHullMod {
             customData.put(capacityKey, 100f);
         }
         if(customData.get(alreadyRegenKey) == null){
-            customData.put(capacityKey, 0f);
+            customData.put(alreadyRegenKey, 0f);
         }
 
         float regenCapacity = (float)customData.get(capacityKey);
         float alreadyRegen = (float)customData.get(alreadyRegenKey);
 
-        float remainingHP = ship.getHitpoints() / ship.getMaxHitpoints() * 100f;
+        float remainingHP = ship.getHullLevel() * 100f;
 
-        if(remainingHP >= regenCapacity)
-            return;
+        if(remainingHP < regenCapacity && remainingHP < ship.getMaxHitpoints()){
 
-        float valToRegen = ship.getMaxHitpoints() * (regenSpeed.get(ship.getHullSize())) * amount;
+            float valToRegen = ship.getMaxHitpoints() * ( regenSpeed.get(ship.getHullSize() ) / 100f ) * amount;
 
-        if(valToRegen > ship.getMaxHitpoints() * regenCapacity - ship.getHitpoints())
-            valToRegen = ship.getMaxHitpoints() * regenCapacity - ship.getHitpoints();
+            if(valToRegen > ship.getMaxHitpoints() * (regenCapacity / 100f) - ship.getHitpoints())
+                valToRegen = ship.getMaxHitpoints() * (regenCapacity / 100f) - ship.getHitpoints();
 
-        alreadyRegen += valToRegen / ship.getMaxHitpoints() * 100f;
+            alreadyRegen += valToRegen / ship.getMaxHitpoints() * 100f;
 
-        regenCapacity = 100f - alreadyRegen / 3f;
+            regenCapacity = 100f - (alreadyRegen / 5f);
 
-        float val = ship.getHitpoints() + valToRegen;
+            float val = ship.getHitpoints() + valToRegen;
 
-        ship.setHitpoints(val);
+            ship.setHitpoints(val);
 
-        customData.put(capacityKey, regenCapacity);
-        customData.put(alreadyRegenKey, alreadyRegen);
+            customData.put(capacityKey, regenCapacity);
+            customData.put(alreadyRegenKey, alreadyRegen);
 
+        }
         if(ship != cEngine.getPlayerShip())
             return;
 
-        cEngine.maintainStatusForPlayerShip("tbca_biomechanical_hull_capacity", "graphics/icons/hullsys/biomechanical_hull.png", "Total Regeneration Capacity", (float) Math.round(regenCapacity * 1000) / 10 + "%", true);
+        //cEngine.maintainStatusForPlayerShip("tbca_biomechanical_hull_alreadyRegen", "graphics/icons/hullsys/biomechanical_hull.png", "Amount Already Regenerated", (float) Math.round(alreadyRegen * 10) / 10 + "%", false);
+        if(remainingHP >= 100f) {
+            cEngine.maintainStatusForPlayerShip("tbca_biomechanical_hull_capacity", "graphics/icons/hullsys/biomechanical_hull.png", "Total Regeneration Capacity", (float) Math.round(regenCapacity * 10) / 10 + "%  The Ship is Healthy!", false);
+        }
+        else{
+            if(remainingHP < regenCapacity){
+                cEngine.maintainStatusForPlayerShip("tbca_biomechanical_hull_capacity", "graphics/icons/hullsys/biomechanical_hull.png", "Total Regeneration Capacity", (float) Math.round(regenCapacity * 10) / 10 + "% ...Regeneration in Progress!", true);
+            }
+            else{
+                cEngine.maintainStatusForPlayerShip("tbca_biomechanical_hull_capacity", "graphics/icons/hullsys/biomechanical_hull.png", "Total Regeneration Capacity", (float) Math.round(regenCapacity * 10) / 10 + "% ...Current Regeneration Capacity Reached!", false);
+            }
+        }
+
     }
 }
