@@ -11,6 +11,14 @@ import java.util.Objects;
 
 public class BiomechanicalHull extends BaseHullMod {
 
+    @Override
+    public String getUnapplicableReason(ShipAPI ship) {
+        if(ship.getVariant().hasHullMod("tbca_recycle_bots")){
+            return "The Bio-Mechanical Hull will eat the Recycle Bots, but in turn it will receive a bonus in the scarring effect efficiency.";
+        }
+        return null;
+    }
+
     final Map<ShipAPI.HullSize, Float> regenSpeed = new HashMap<>();
     {
         regenSpeed.put(ShipAPI.HullSize.FIGHTER, 2f);
