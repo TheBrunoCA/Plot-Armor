@@ -20,7 +20,7 @@ public class RecyclerBots extends BaseHullMod {
         recycleSpeed.put(ShipAPI.HullSize.CRUISER, 1f);
         recycleSpeed.put(ShipAPI.HullSize.CAPITAL_SHIP, 1f);
     }
-    float minimumArmor = 10f;
+    float minimumArmor = 0.1f;
 
     @Override
     public void advanceInCombat(ShipAPI ship, float amount) {
@@ -41,7 +41,63 @@ public class RecyclerBots extends BaseHullMod {
 
         ArmorGridAPI armorGrid = ship.getArmorGrid();
 
+        float totalCells = armorGrid.getGrid().length * armorGrid.getGrid()[0].length;
+        float valToRegen = (ship.getMaxHitpoints() * (recycleSpeed.get(ship.getHullSize()) / 100f) * amount) / totalCells;
+        boolean isFull = ship.getHullLevel() >= 1f;
+        float maxArmor = armorGrid.getMaxArmorInCell();
+        boolean repairedSome = false;
 
+        if(!isFull){
+            for(int x = 0; x < armorGrid.getGrid().length; x++){
+                for(int y = 0; y < armorGrid.getGrid()[0].length; y++){
+
+                    float cellArmor = armorGrid.getArmorValue(x, y);
+                    boolean hasMinimumArmor = (cellArmor / maxArmor) > minimumArmor;
+
+                    if(!hasMinimumArmor || isFull){
+                        continue;
+                    }
+
+                    if(valToRegen > (ship.getMaxHitpoints() - ship.getHitpoints())){
+                        valToRegen = ship.getMaxHitpoints() - ship.getHitpoints();
+                        isFull = true;
+                    }
+
+                    ship.setHitpoints(ship.getHitpoints() + valToRegen);
+                    repairedSome = true;
+
+                    if(Objects.equals(ship.getId(), Global.getCombatEngine().getPlayerShip().getId())){
+                        Global.getCombatEngine().maintainStatusForPlayerShip(
+                                "tbca_recycle_bots_in_action",
+                                "graphics/icons/hullsys/recycle_bots.png",
+                                "Recycle Bots In Action!",
+                                "The Recycle Bots Are Striping The Armor\nAnd Using It To Repair The Hull.\n",
+                                false );
+                    }
+                }
+            }
+        }
+        if(Objects.equals(ship.getId(), Global.getCombatEngine().getPlayerShip().getId()))
+            return;
+
+        if(isFull){
+            Global.getCombatEngine().maintainStatusForPlayerShip(
+                    "tbca_recycle_bots_full_health",
+                    "graphics/icons/hullsys/recycle_bots.png",
+                    "Recycle Bots In StandBy Mode!",
+                    "Hull Is In Perfect Conditions!",
+                    false );
+        }
+        else{
+            if(!repairedSome){
+                Global.getCombatEngine().maintainStatusForPlayerShip(
+                        "tbca_recycle_bots_full_min_armor",
+                        "graphics/icons/hullsys/recycle_bots.png",
+                        "Recycle Bots Disabled!",
+                        "Armor Plates Are In Minimum Condition!",
+                        true );
+            }
+        }
 
     }
 }
