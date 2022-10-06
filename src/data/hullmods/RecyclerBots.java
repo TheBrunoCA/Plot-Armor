@@ -28,14 +28,14 @@ public class RecyclerBots extends BaseHullMod {
 
     Map<ShipAPI.HullSize, Float> recycleSpeed = new HashMap<>();
     {
-        recycleSpeed.put(ShipAPI.HullSize.FIGHTER, 1f);
-        recycleSpeed.put(ShipAPI.HullSize.FRIGATE, 1f);
-        recycleSpeed.put(ShipAPI.HullSize.DESTROYER, 1f);
+        recycleSpeed.put(ShipAPI.HullSize.FIGHTER, 2f);
+        recycleSpeed.put(ShipAPI.HullSize.FRIGATE, 2f);
+        recycleSpeed.put(ShipAPI.HullSize.DESTROYER, 1.5f);
         recycleSpeed.put(ShipAPI.HullSize.CRUISER, 1f);
-        recycleSpeed.put(ShipAPI.HullSize.CAPITAL_SHIP, 1f);
+        recycleSpeed.put(ShipAPI.HullSize.CAPITAL_SHIP, 0.7f);
     }
     float minimumArmor = 0.1f;
-    float armorRemovalMult = 0.5f;
+    float armorRemovalMulti = 0.5f;
 
     @Override
     public void advanceInCombat(ShipAPI ship, float amount) {
@@ -45,7 +45,7 @@ public class RecyclerBots extends BaseHullMod {
 
         if(!ship.isAlive() || hasBioHull){
             if(Objects.equals(ship.getId(), cEngine.getPlayerShip().getId()) && hasBioHull){
-                cEngine.maintainStatusForPlayerShip("tbca_recycler_bots_eaten",
+                cEngine.maintainStatusForPlayerShip("tbca_recycle_bots",
                         "graphics/hullsys/recycle_bots.png",
                         "Recycle Bots Eaten!",
                         "The Bio-Mechanical Hull Ate the Recycle Bots\nBio-Mechanical Hull Is Now More Efficient",
@@ -79,26 +79,18 @@ public class RecyclerBots extends BaseHullMod {
                     }
 
                     ship.setHitpoints(ship.getHitpoints() + valToRegen);
-                    armorGrid.setArmorValue(x, y, cellArmor - (maxArmor * amount * armorRemovalMult));
+                    armorGrid.setArmorValue(x, y, cellArmor - (( maxArmor * amount / 100f )
+                            * (armorRemovalMulti * recycleSpeed.get(ship.getHullSize()))));
                     repairedSome = true;
-
-                    if(Objects.equals(ship.getId(), Global.getCombatEngine().getPlayerShip().getId())){
-                        Global.getCombatEngine().maintainStatusForPlayerShip(
-                                "tbca_recycle_bots_in_action",
-                                "graphics/icons/hullsys/recycle_bots.png",
-                                "Recycle Bots In Action!",
-                                "The Recycle Bots Are Striping The Armor\nAnd Using It To Repair The Hull.\n",
-                                false );
-                    }
                 }
             }
         }
-        if(Objects.equals(ship.getId(), Global.getCombatEngine().getPlayerShip().getId()))
+        if(!Objects.equals(ship.getId(), Global.getCombatEngine().getPlayerShip().getId()))
             return;
 
         if(isFull){
             Global.getCombatEngine().maintainStatusForPlayerShip(
-                    "tbca_recycle_bots_full_health",
+                    "tbca_recycle_bots",
                     "graphics/icons/hullsys/recycle_bots.png",
                     "Recycle Bots In StandBy Mode!",
                     "Hull Is In Perfect Conditions!",
@@ -107,11 +99,19 @@ public class RecyclerBots extends BaseHullMod {
         else{
             if(!repairedSome){
                 Global.getCombatEngine().maintainStatusForPlayerShip(
-                        "tbca_recycle_bots_full_min_armor",
+                        "tbca_recycle_bots",
                         "graphics/icons/hullsys/recycle_bots.png",
                         "Recycle Bots Disabled!",
                         "Armor Plates Are In Minimum Condition!",
                         true );
+            }
+            else{
+                Global.getCombatEngine().maintainStatusForPlayerShip(
+                        "tbca_recycle_bots",
+                        "graphics/icons/hullsys/recycle_bots.png",
+                        "Recycle Bots In Action!",
+                        "Repairing the Hull.....",
+                        false );
             }
         }
 
