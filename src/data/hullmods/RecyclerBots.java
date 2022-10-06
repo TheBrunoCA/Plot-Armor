@@ -35,6 +35,7 @@ public class RecyclerBots extends BaseHullMod {
         recycleSpeed.put(ShipAPI.HullSize.CAPITAL_SHIP, 1f);
     }
     float minimumArmor = 0.1f;
+    float armorRemovalMult = 0.5f;
 
     @Override
     public void advanceInCombat(ShipAPI ship, float amount) {
@@ -78,6 +79,7 @@ public class RecyclerBots extends BaseHullMod {
                     }
 
                     ship.setHitpoints(ship.getHitpoints() + valToRegen);
+                    armorGrid.setArmorValue(x, y, cellArmor - (maxArmor * amount * armorRemovalMult));
                     repairedSome = true;
 
                     if(Objects.equals(ship.getId(), Global.getCombatEngine().getPlayerShip().getId())){
