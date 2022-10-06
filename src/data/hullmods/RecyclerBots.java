@@ -17,6 +17,12 @@ public class RecyclerBots extends BaseHullMod {
         if(ship.getVariant().hasHullMod("tbca_biomechanical_hull")){
             return "The Recycle Bots will be eaten by the Bio-Mechanical Hull, giving the latter a bonus in the scarring effect efficiency.";
         }
+        return "";
+    }
+
+    @Override
+    public String getDescriptionParam(int index, ShipAPI.HullSize hullSize) {
+        if(index == 0) return minimumArmor * 100f + "%";
         return null;
     }
 
